@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Design 完全入門 — ゼロから学ぶ手順サイト</title>
+<style>
+  :root{
+    --coral:#d97757; --coral-dark:#c15f3c; --coral-soft:#f4e4dc;
+    --ink:#1f1b17; --ink-soft:#5b5550; --line:#e7e0d8;
+    --bg:#faf7f3; --card:#ffffff; --code-bg:#2b2620; --code-ink:#f3ede4;
+    --good:#3f7d58; --warn:#b5852b; --sidebar-w:288px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Segoe UI",sans-serif;
+    line-height:1.85; font-size:16px;
+  }
+  /* progress bar */
+  #progress{position:fixed; top:0; left:0; height:4px; width:0%; z-index:200;
+    background:linear-gradient(90deg,var(--coral),var(--coral-dark));}
+  /* layout */
+  .wrap{display:flex; max-width:1240px; margin:0 auto;}
+  nav.toc{
+    width:var(--sidebar-w); flex:0 0 var(--sidebar-w);
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+    padding:28px 18px 60px; border-right:1px solid var(--line); background:#fff;
+  }
+  nav.toc .brand{display:flex; align-items:center; gap:10px; margin-bottom:22px;}
+  nav.toc .brand .logo{width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--coral),var(--coral-dark));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;}
+  nav.toc .brand b{font-size:15px;line-height:1.2;}
+  nav.toc .brand span{display:block;font-size:11px;color:var(--ink-soft);font-weight:500;}
+  nav.toc ol{list-style:none; margin:0; padding:0; counter-reset:c;}
+  nav.toc li a{
+    display:flex; gap:9px; align-items:baseline; text-decoration:none; color:var(--ink-soft);
+    padding:7px 10px; border-radius:8px; font-size:13.5px; transition:.15s;
+  }
+  nav.toc li a:before{counter-increment:c; content:counter(c); font-size:11px; font-weight:700;
+    color:var(--coral); min-width:16px; text-align:right;}
+  nav.toc li a:hover{background:var(--coral-soft); color:var(--ink);}
+  nav.toc li a.active{background:var(--coral-soft); color:var(--coral-dark); font-weight:700;}
+  /* content */
+  main{flex:1 1 auto; min-width:0; padding:48px 56px 120px; max-width:880px;}
+  header.hero{margin-bottom:46px;}
+  header.hero .kicker{display:inline-block;background:var(--coral-soft);color:var(--coral-dark);
+    font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:99px;letter-spacing:.04em;}
+  header.hero h1{font-size:38px; line-height:1.25; margin:18px 0 10px; letter-spacing:-.01em;}
+  header.hero p.lead{font-size:18px;color:var(--ink-soft);margin:0;}
+  header.hero .meta{margin-top:20px;font-size:13px;color:var(--ink-soft);
+    display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px;}
+  section{margin-bottom:56px; scroll-margin-top:24px;}
+  section h2{font-size:25px;margin:0 0 6px;letter-spacing:-.01em;display:flex;align-items:center;gap:11px;}
+  section h2 .num{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--coral);
+    color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  section .sub{color:var(--ink-soft);font-size:14px;margin:0 0 20px;padding-left:41px;}
+  h3{font-size:18px;margin:30px 0 8px;}
+  p{margin:12px 0;}
+  a.inline{color:var(--coral-dark);text-decoration:underline;text-underline-offset:2px;}
+  /* cards & callouts */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:18px 0;
+    box-shadow:0 1px 2px rgba(0,0,0,.03);}
+  .callout{border-left:4px solid var(--coral);background:#fff;border-radius:0 12px 12px 0;
+    padding:14px 18px;margin:18px 0;font-size:14.5px;}
+  .callout.tip{border-color:var(--good);background:#f1f7f3;}
+  .callout.warn{border-color:var(--warn);background:#fbf6ec;}
+  .callout .t{font-weight:700;display:block;margin-bottom:3px;}
+  /* steps */
+  ol.steps{counter-reset:s; list-style:none; padding:0; margin:18px 0;}
+  ol.steps>li{position:relative; padding:4px 0 18px 46px; border-left:2px solid var(--line); margin-left:14px;}
+  ol.steps>li:last-child{border-left-color:transparent;}
+  ol.steps>li:before{counter-increment:s; content:counter(s);
+    position:absolute; left:-15px; top:0; width:28px; height:28px; border-radius:50%;
+    background:var(--coral); color:#fff; font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center;}
+  ol.steps>li b{display:block;font-size:15.5px;margin-bottom:2px;}
+  /* glossary */
+  .term{border:1px solid var(--line);border-radius:11px;margin:10px 0;overflow:hidden;background:#fff;}
+  .term summary{cursor:pointer;padding:13px 18px;font-weight:700;font-size:15px;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;}
+  .term summary::-webkit-details-marker{display:none;}
+  .term summary:after{content:"＋";color:var(--coral);font-weight:700;}
+  .term[open] summary:after{content:"－";}
+  .term .body{padding:0 18px 16px;color:var(--ink-soft);font-size:14.5px;}
+  /* code */
+  pre{background:var(--code-bg);color:var(--code-ink);border-radius:11px;padding:16px 18px;overflow-x:auto;
+    font-size:13.5px;line-height:1.6;position:relative;}
+  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;}
+  p code,li code,td code{background:var(--coral-soft);color:var(--coral-dark);padding:1px 6px;border-radius:5px;font-size:13px;}
+  .prompt{background:#fff;border:1px dashed var(--coral);border-radius:11px;padding:14px 16px;margin:12px 0;position:relative;}
+  .prompt .lbl{font-size:11px;font-weight:700;color:var(--coral-dark);letter-spacing:.05em;text-transform:uppercase;}
+  .prompt p{margin:6px 0 0;font-size:14.5px;}
+  .copy{position:absolute;top:10px;right:10px;background:var(--coral);color:#fff;border:none;border-radius:7px;
+    padding:4px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
+  .copy:hover{background:var(--coral-dark);}
+  .copy.done{background:var(--good);}
+  /* tables */
+  table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{background:var(--coral-soft);color:var(--coral-dark);font-size:13px;}
+  /* pills row */
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+  .pill{background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:600;}
+  .pill.on{background:var(--coral);color:#fff;border-color:var(--coral);}
+  /* checklist */
+  .check{list-style:none;padding:0;margin:14px 0;}
+  .check li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14.5px;}
+  .check input{margin-top:5px;width:17px;height:17px;accent-color:var(--coral);flex:0 0 auto;}
+  /* faq */
+  .faq{border-bottom:1px solid var(--line);}
+  .faq summary{cursor:pointer;padding:14px 0;font-weight:700;list-style:none;}
+  .faq summary::-webkit-details-marker{display:none;}
+  .faq summary:before{content:"Q ";color:var(--coral);font-weight:800;}
+  .faq .a{padding:0 0 16px 22px;color:var(--ink-soft);font-size:14.5px;}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:40px;color:var(--ink-soft);font-size:13px;}
+  footer a{color:var(--coral-dark);}
+  /* responsive */
+  .menu-btn{display:none;}
+  @media(max-width:860px){
+    nav.toc{position:fixed;left:0;top:0;z-index:150;transform:translateX(-100%);transition:.25s;box-shadow:4px 0 24px rgba(0,0,0,.12);}
+    nav.toc.open{transform:translateX(0);}
+    main{padding:64px 22px 100px;}
+    header.hero h1{font-size:29px;}
+    .menu-btn{display:flex;position:fixed;top:12px;left:12px;z-index:160;width:44px;height:44px;border-radius:11px;
+      background:var(--coral);color:#fff;border:none;font-size:20px;align-items:center;justify-content:center;cursor:pointer;
+      box-shadow:0 3px 10px rgba(0,0,0,.18);}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<button class="menu-btn" id="menuBtn" aria-label="目次">☰</button>
+<div class="wrap">
+
+  <!-- ===== TOC ===== -->
+  <nav class="toc" id="toc">
+    <div class="brand">
+      <div class="logo">✷</div>
+      <div><b>Claude Design 入門</b><span>ゼロから学ぶ手順サイト</span></div>
+    </div>
+    <ol>
+      <li><a href="#s1">Claude Design とは？</a></li>
+      <li><a href="#s2">まず覚える用語</a></li>
+      <li><a href="#s3">使える条件・始め方</a></li>
+      <li><a href="#s4">最初のデザインを作る</a></li>
+      <li><a href="#s5">画面（キャンバス）の見方</a></li>
+      <li><a href="#s6">3つの修正方法</a></li>
+      <li><a href="#s7">参考資料を渡す</a></li>
+      <li><a href="#s8">デザインシステムと design-sync</a></li>
+      <li><a href="#s9">バージョンを残す</a></li>
+      <li><a href="#s10">書き出し（エクスポート）</a></li>
+      <li><a href="#s11">Claude Code へ引き継ぐ</a></li>
+      <li><a href="#s12">共有する</a></li>
+      <li><a href="#s13">良いプロンプトのコツ</a></li>
+      <li><a href="#s14">困ったとき / 制限事項</a></li>
+      <li><a href="#s15">練習：チェックリスト</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <main>
+    <header class="hero">
+      <span class="kicker">完全初心者向け・用語から丁寧に</span>
+      <h1>Claude Design を<br>ゼロから使えるようになる</h1>
+      <p class="lead">チャットで会話しながら、デザイン・プロトタイプ・資料を作る Claude の新機能。専門知識ゼロでも、この順番どおりに読めば最初の1枚が作れます。</p>
+      <div class="meta">
+        <span>📍 対象：はじめて触る人</span>
+        <span>⏱ 読了の目安：約15分</span>
+        <span>🔗 公式：<a class="inline" href="https://claude.ai/design" target="_blank" rel="noopener">claude.ai/design</a></span>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <section id="s1">
+      <h2><span class="num">1</span>Claude Design とは？</h2>
+      <p class="sub">「絵を描くソフト」ではなく「お願いするとデザインしてくれる相棒」です。</p>
+      <p><b>Claude Design（クロード・デザイン）</b>は、Anthropic（アンソロピック／Claude を作っている会社）が2026年4月に公開したデザイン機能です。<b>マウスでパーツを並べて作る</b>のではなく、<b>「こういうものが欲しい」と言葉で伝えると、Claude が画面を作ってくれます。</b></p>
+      <div class="card">
+        <h3 style="margin-top:0">こんなものが作れます</h3>
+        <div class="pills">
+          <span class="pill">Webサイト・LP（ランディングページ）</span>
+          <span class="pill">アプリの画面イメージ</span>
+          <span class="pill">動くプロトタイプ</span>
+          <span class="pill">プレゼン資料・ピッチデック</span>
+          <span class="pill">ダッシュボード</span>
+          <span class="pill">バナー・販促物</span>
+        </div>
+      </div>
+      <p>画面は<b>左がチャット欄</b>、<b>右が「キャンバス」（作品が表示される場所）</b>の2つに分かれています。あなたが左で話しかけると、右にデザインが現れ、会話を重ねるたびに少しずつ理想に近づいていきます。</p>
+      <div class="callout tip"><span class="t">💡 一言でいうと</span>「Photoshop や Figma の使い方を覚えなくても、<b>日本語でお願いするだけ</b>でデザインができる」ツールです。</div>
+    </section>
+
+    <!-- 2 -->
+    <section id="s2">
+      <h2><span class="num">2</span>まず覚える用語</h2>
+      <p class="sub">この5語だけ知っておけば、あとの説明がスッと入ります。タップで開きます。</p>
+
+      <details class="term" open><summary>キャンバス（Canvas）</summary>
+        <div class="body">作ったデザインが表示される、画面の右側の作業スペースのこと。紙やホワイトボードのようなもの。ここに完成イメージが出ます。</div></details>
+
+      <details class="term"><summary>プロンプト（Prompt）</summary>
+        <div class="body">Claude にお願いする「指示文」のこと。「ヒーローセクション付きのLPを作って」のような一文。良いプロンプトの書き方は<a class="inline" href="#s13">13章</a>で解説します。</div></details>
+
+      <details class="term"><summary>プロトタイプ（Prototype）</summary>
+        <div class="body">実際に動く「試作品」。ボタンを押すと画面が切り替わる、など本物に近い動きを確認できる状態。発表前のテストに便利。</div></details>
+
+      <details class="term"><summary>デザインシステム（Design System）</summary>
+        <div class="body">会社やチームの「色・フォント・ボタンの形」などのルール集。これを読み込ませると、作るデザインが自動でブランドの見た目に揃います（<a class="inline" href="#s8">8章</a>）。</div></details>
+
+      <details class="term"><summary>エクスポート（Export）／ハンドオフ（Handoff）</summary>
+        <div class="body"><b>エクスポート＝書き出し</b>。作ったデザインを PDF・PowerPoint・HTML などの形で取り出すこと。<b>ハンドオフ＝引き継ぎ</b>。デザインを開発（コード化）の段階へ渡すこと（<a class="inline" href="#s11">11章</a>）。</div></details>
+    </section>
+
+    <!-- 3 -->
+    <section id="s3">
+      <h2><span class="num">3</span>使える条件・始め方</h2>
+      <p class="sub">「誰が使えるか」と「どこから入るか」を確認しましょう。</p>
+      <table>
+        <tr><th>項目</th><th>内容</th></tr>
+        <tr><td>利用できるプラン</td><td><b>Pro / Max / Team / Enterprise</b>（有料プラン）。現在は<b>ベータ版（試験公開）</b>です。無料プランでは使えません。</td></tr>
+        <tr><td>入口（アクセス方法）</td><td>① ブラウザで <a class="inline" href="https://claude.ai/design" target="_blank" rel="noopener">claude.ai/design</a> を開く<br>② または Claude デスクトップアプリの<b>サイドバー</b>から</td></tr>
+        <tr><td>使える端末</td><td>パソコン（Web・デスクトップ）のみ。<b>スマホ非対応</b>です。</td></tr>
+        <tr><td>料金の考え方</td><td>チャットや Claude Code と<b>共通の利用枠</b>から消費されます。Design 専用の追加料金はありません。大きく複雑なものほど多く消費します。</td></tr>
+        <tr><td>Enterprise の注意</td><td>初期設定では<b>オフ</b>になっています。管理者に有効化を依頼してください。</td></tr>
+      </table>
+      <div class="callout"><span class="t">はじめの一歩</span>有料プランにログインした状態で <code>claude.ai/design</code> を開く → 新しいプロジェクトを作る。これだけで準備完了です。</div>
+    </section>
+
+    <!-- 4 -->
+    <section id="s4">
+      <h2><span class="num">4</span>最初のデザインを作る</h2>
+      <p class="sub">いちばん大事な「基本の流れ」。実はたった4ステップです。</p>
+      <ol class="steps">
+        <li><b>新しいプロジェクトを作る</b>チームのデザインシステムが設定済みなら、色やフォントが自動で引き継がれます。何もなくてもOK、そのまま進めます。</li>
+        <li><b>欲しいものを言葉で伝える（プロンプト）</b>「何を・どんな配置で・何を載せて・誰向けか」を一文で。例は下の枠を「コピー」して使ってみてください。</li>
+        <li><b>キャンバスの結果を見る</b>右側に最初のデザインが現れます。完璧でなくてOK。ここから育てていきます。</li>
+        <li><b>会話や直接編集で仕上げる</b>「もっと暗い配色に」「ここを大きく」と伝えるたびに改善されます（詳しくは<a class="inline" href="#s6">6章</a>）。</li>
+      </ol>
+
+      <h3>そのまま使えるプロンプト例</h3>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">例1：ランディングページ</span>
+        <p>新しいAI翻訳アプリのランディングページを作って。ヒーローセクション（キャッチコピー＋登録ボタン）、機能を3つ並べた紹介、料金プラン、お客様の声、フッターを縦に配置して。明るく信頼感のある配色で、対象は中小企業の担当者。</p></div>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">例2：ダッシュボード</span>
+        <p>月間の売上を表示するダッシュボードを作って。上段に「売上・新規顧客・解約率」の3つの数値カード、その下に月別売上の折れ線グラフ、右側に地域でフィルターできる絞り込み。ビジネス向けの落ち着いた見た目で。</p></div>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">例3：アプリのオンボーディング</span>
+        <p>スマホアプリの初回登録フローを4画面で作って。①ようこそ ②メール登録 ③興味のあるカテゴリ選択 ④完了。各画面に進むボタンを付けて、若い世代向けの親しみやすいデザインで。</p></div>
+      <div class="callout tip"><span class="t">💡 ポイント</span>最初から完璧を狙わず、<b>シンプルに頼んで→少しずつ足す</b>のが成功のコツ。迷ったら「2〜3パターン見せて」と頼むと選べます。</div>
+    </section>
+
+    <!-- 5 -->
+    <section id="s5">
+      <h2><span class="num">5</span>画面（キャンバス）の見方</h2>
+      <p class="sub">どこに何があるか分かれば、もう迷いません。</p>
+      <div class="card">
+        <table>
+          <tr><th>場所</th><th>役割</th></tr>
+          <tr><td>左：チャット欄</td><td>Claude に指示を出す場所。大きな変更や「やり直し」「別案」はここで頼む。</td></tr>
+          <tr><td>右：キャンバス</td><td>デザインが表示される場所。要素を<b>ドラッグで移動・サイズ変更・整列</b>でき、クリックして<b>コメント</b>も付けられる。</td></tr>
+          <tr><td>右上：Export ボタン</td><td>完成したデザインを書き出す・他ツールへ送る入口（<a class="inline" href="#s10">10章</a>）。</td></tr>
+          <tr><td>右上：Share ボタン</td><td>リンクを作って人に共有（<a class="inline" href="#s12">12章</a>）。</td></tr>
+        </table>
+      </div>
+      <p>つまり<b>「ざっくりした変更は左のチャット」「細かい位置や見た目は右のキャンバスで直接」</b>と覚えると迷いません。</p>
+    </section>
+
+    <!-- 6 -->
+    <section id="s6">
+      <h2><span class="num">6</span>3つの修正方法を使い分ける</h2>
+      <p class="sub">直し方は3通り。場面で使い分けると一気に上達します。</p>
+      <table>
+        <tr><th>方法</th><th>得意なこと</th><th>言い方の例</th></tr>
+        <tr><td><b>① チャット</b><br>（大きな変更）</td><td>全体の雰囲気・構成・別案づくり</td><td>「配色を暗めでミニマルに」「指標を上の行にまとめて」「別レイアウトを2案見せて」</td></tr>
+        <tr><td><b>② インラインコメント</b><br>（ピンポイント）</td><td>特定の部品だけを直す</td><td>要素をクリックして「このボタンの余白を広く」「ここをドロップダウンに」「ここはブランド色で」</td></tr>
+        <tr><td><b>③ 直接編集</b><br>（見た目の微調整）</td><td>位置・大きさ・整列をその場で</td><td>マウスで<b>ドラッグ・リサイズ・整列</b>。文字も直接打ち替え可能。</td></tr>
+      </table>
+      <div class="callout warn"><span class="t">⚠ ベータ版の小ワザ</span>インラインコメントがまれに消える・反映されないことがあります。そのときは<b>同じ内容をチャットに貼り付けて</b>伝えれば確実です。</div>
+      <div class="callout tip"><span class="t">💡 上達のコツ</span>「なんか違う」ではなく<b>「余白を8pxに詰めて」「文字を1段大きく」</b>のように<b>具体的な数値・部品名</b>で伝えると、思いどおりに直ります。</div>
+    </section>
+
+    <!-- 7 -->
+    <section id="s7">
+      <h2><span class="num">7</span>参考資料を渡してブレを減らす</h2>
+      <p class="sub">「こんな感じ」を見せると、一発で精度が上がります。</p>
+      <p>プロジェクトには、いつでも参考になる素材を追加できます。Claude はそれを見て方向性を合わせてくれます。</p>
+      <ul class="check">
+        <li><input type="checkbox"><span><b>ビジュアル参考</b>：スクリーンショット、競合のデザイン、手描きのワイヤーフレーム、インスピレーション画像</span></li>
+        <li><input type="checkbox"><span><b>ドキュメント</b>：Word（DOCX）、PowerPoint（PPTX）、Excel（XLSX）などの資料</span></li>
+        <li><input type="checkbox"><span><b>コード／ファイル</b>：既存のコードリポジトリを連携して、部品の構成に反映</span></li>
+      </ul>
+      <div class="callout tip"><span class="t">💡 おすすめ</span>言葉で説明しづらいときは、<b>イメージに近い画像を1枚アップロード</b>して「これくらいの雰囲気で」と添えるのが最短ルートです。</div>
+    </section>
+
+    <!-- 8 -->
+    <section id="s8">
+      <h2><span class="num">8</span>デザインシステムと <code>/design-sync</code></h2>
+      <p class="sub">少し上級。会社のブランドに揃えたい人向けですが、概念だけ知っておけばOK。</p>
+      <p><b>デザインシステム</b>＝色・フォント・ボタンの形などの「自社ルール集」。これを読み込ませると、作るものすべてが自動でブランドの見た目になります。</p>
+      <ol class="steps">
+        <li><b>セットアップ（デザイン責任者の作業）</b>Claude が自社の<b>コードやデザインファイルを読み取って</b>、デザインシステムを自動で組み立てます。</li>
+        <li><b>適用は自動</b>一度設定すれば、新しいプロジェクトに色・文字・部品パターンが<b>勝手に反映</b>されます。手動設定は不要。</li>
+        <li><b>コードと同期したいとき</b>Claude Code（後述）で <code>/design-sync</code> と打つと、コードベースのデザインシステムを取り込めます。</li>
+      </ol>
+      <div class="callout"><span class="t">用語メモ</span><b>リポジトリ（repository）</b>＝プログラムのコードを保管している置き場のこと。「コードを連携」とは、この置き場をClaudeに見せることです。</div>
+    </section>
+
+    <!-- 9 -->
+    <section id="s9">
+      <h2><span class="num">9</span>バージョンを残して試す</h2>
+      <p class="sub">「今のを残したまま、別案も試したい」を叶える一言。</p>
+      <p>大きく方向転換したいときは、こう伝えるだけ。今の状態が保存され、安心して別案に挑戦できます。</p>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">バージョン保存の魔法の一文</span>
+        <p>今のデザインを保存して、まったく別のアプローチを試して。</p></div>
+      <p>Claude は現在のプロジェクトを保存し、<b>どこに保存したか</b>を教えてくれるので、あとから見比べられます。</p>
+    </section>
+
+    <!-- 10 -->
+    <section id="s10">
+      <h2><span class="num">10</span>書き出し（エクスポート）</h2>
+      <p class="sub">完成したら、右上の <b>Export</b> ボタンから取り出します。</p>
+      <h3>ファイルとして保存</h3>
+      <div class="pills">
+        <span class="pill">.zip でダウンロード</span>
+        <span class="pill">PDF</span>
+        <span class="pill">PPTX（PowerPoint）</span>
+        <span class="pill">単体HTML</span>
+      </div>
+      <h3>他のツールへ送る</h3>
+      <p>使い慣れたサービスへそのまま連携できます（順次追加中）。</p>
+      <div class="pills">
+        <span class="pill">Adobe</span><span class="pill">Canva</span><span class="pill">Gamma</span>
+        <span class="pill">Vercel</span><span class="pill">Replit</span><span class="pill">Lovable</span>
+        <span class="pill">Miro</span><span class="pill">Base44</span><span class="pill">Wix</span>
+      </div>
+      <div class="callout tip"><span class="t">💡 使い分け</span>資料として配るなら<b>PDF／PPTX</b>、Webに出すなら<b>HTML／Vercel</b>、デザインを続けて編集するなら<b>Canva／Adobe</b>が便利です。</div>
+    </section>
+
+    <!-- 11 -->
+    <section id="s11">
+      <h2><span class="num">11</span>Claude Code へ引き継ぐ（ハンドオフ）</h2>
+      <p class="sub">「デザイン → 本物のソフト（コード）」へ進める段階。あなたが選んだ目的地です。</p>
+      <p>デザインが固まったら、それを<b>実際に動くソフトに変える</b>ために <b>Claude Code</b>（Claude のコーディング担当）へ引き継げます。スクリーンショットから作り直すのではなく、<b>あなたの作業の続きから</b>開発が始まるのが特徴です。</p>
+      <table>
+        <tr><th>引き継ぎ先</th><th>こんな人に</th></tr>
+        <tr><td>ローカルのコーディングエージェント</td><td>自分のPCで開発環境を持っている人</td></tr>
+        <tr><td>Claude Code Web</td><td>ブラウザだけで手軽に進めたい人</td></tr>
+      </table>
+      <div class="callout warn"><span class="t">⚠ 初回の注意</span><code>/design</code> や <code>/design-sync</code> の機能は、Claude Code の新しいセッションで <code>/update</code> を一度実行してから使えるようになります。</div>
+      <div class="callout"><span class="t">流れのまとめ</span>① Design で見た目を作る → ② 固まったら Claude Code へハンドオフ → ③ コードとして仕上げて公開。デザインと開発が地続きになります。</div>
+    </section>
+
+    <!-- 12 -->
+    <section id="s12">
+      <h2><span class="num">12</span>共有する</h2>
+      <p class="sub">右上の <b>Share</b> から、権限を選んでリンクを発行します。</p>
+      <table>
+        <tr><th>権限</th><th>できること</th></tr>
+        <tr><td>閲覧のみ（View）</td><td>見るだけ。関係者への共有に</td></tr>
+        <tr><td>コメント（Comment）</td><td>見て意見を書き込める。レビュー依頼に</td></tr>
+        <tr><td>編集（Edit）</td><td>一緒に直せる。共同作業に</td></tr>
+      </table>
+      <div class="callout warn"><span class="t">⚠ 範囲に注意</span>共有は<b>自分の組織（チーム）内</b>に限られます。社外の人へはそのまま渡せません。また、複数人での同時編集はベータ版では不安定なことがあります。</div>
+    </section>
+
+    <!-- 13 -->
+    <section id="s13">
+      <h2><span class="num">13</span>良いプロンプトのコツ</h2>
+      <p class="sub">指示の質＝出来の質。この「4要素」を入れるだけで激変します。</p>
+      <div class="card">
+        <table>
+          <tr><th>要素</th><th>意味</th><th>例</th></tr>
+          <tr><td>🎯 目的</td><td>何を作るか</td><td>「採用ページを作って」</td></tr>
+          <tr><td>📐 レイアウト</td><td>どう並べるか</td><td>「上にヒーロー、下に職種一覧」</td></tr>
+          <tr><td>📝 内容</td><td>何を載せるか</td><td>「会社の魅力3つと応募ボタン」</td></tr>
+          <tr><td>👥 対象</td><td>誰向けか</td><td>「20代のエンジニア向け」</td></tr>
+        </table>
+      </div>
+      <h3>やってみよう（4要素入りの完成形）</h3>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">4要素を全部入れた例</span>
+        <p>20代エンジニア向けの採用ページを作って。上にキャッチコピーと応募ボタンのヒーロー、その下に会社の魅力を3つカードで、最後に募集中の職種一覧。スタートアップらしい先進的でクリーンな配色で。</p></div>
+      <ul class="check">
+        <li><input type="checkbox"><span>最初は<b>シンプルに</b>頼み、あとから少しずつ足す</span></li>
+        <li><input type="checkbox"><span>フィードバックは<b>具体的に</b>（「余白を8pxに」など数値で）</span></li>
+        <li><input type="checkbox"><span>デザインシステムの<b>部品名で指定</b>する（「プライマリボタンを使って」）</span></li>
+        <li><input type="checkbox"><span>早めに<b>レスポンシブ</b>（スマホ・タブレット・PC）を意識</span></li>
+        <li><input type="checkbox"><span>迷ったら<b>「2〜3案見せて」</b>と頼む</span></li>
+        <li><input type="checkbox"><span>仕上げに<b>「アクセシビリティと使いやすさをレビューして」</b>と頼む</span></li>
+      </ul>
+    </section>
+
+    <!-- 14 -->
+    <section id="s14">
+      <h2><span class="num">14</span>困ったとき / 制限事項（ベータ版）</h2>
+      <p class="sub">「壊れた？」と思う前に、まずここを確認。</p>
+      <details class="faq"><summary>コメントが消える・反映されない</summary><div class="a">ベータ版でたまに起きます。同じ内容を<b>チャットに貼り付けて</b>伝えれば確実に反映されます。コメント一覧の表示も確認してみてください。</div></details>
+      <details class="faq"><summary>大きなリポジトリで動作が重い</summary><div class="a">巨大なコードを直接読ませると遅くなることがあります。その場合は Claude Code 側から <code>/design-sync</code> を使うと安定します。</div></details>
+      <details class="faq"><summary><code>/design</code> や <code>/design-sync</code> が使えない</summary><div class="a">Claude Code の新しいセッションで、最初に <code>/update</code> を実行する必要があります。</div></details>
+      <details class="faq"><summary>チャットがエラーになる</summary><div class="a">同じプロジェクト内で<b>新しいタブを開き直す</b>と回復することがあります。</div></details>
+      <details class="faq"><summary>スマホで使いたい</summary><div class="a">現在は<b>Web・デスクトップ専用</b>で、モバイルには未対応です。</div></details>
+      <details class="faq"><summary>急に使えなくなった</summary><div class="a">利用枠（チャットなどと共通）を使い切った可能性があります。リセットまで待つか、クレジットを追加すると再び使えます。</div></details>
+      <details class="faq"><summary>デザインシステムの取り込みがいまいち</summary><div class="a">取り込みの品質は<b>元コードの整理具合</b>に左右されます。スタイル・フォント・部品が揃った状態で渡すと精度が上がります。</div></details>
+    </section>
+
+    <!-- 15 -->
+    <section id="s15">
+      <h2><span class="num">15</span>練習：はじめてのチェックリスト</h2>
+      <p class="sub">この順にチェックを付けながら、実際に1枚作ってみましょう。</p>
+      <div class="card">
+        <ul class="check">
+          <li><input type="checkbox"><span>有料プランで <a class="inline" href="https://claude.ai/design" target="_blank" rel="noopener">claude.ai/design</a> を開いた</span></li>
+          <li><input type="checkbox"><span>新しいプロジェクトを作った</span></li>
+          <li><input type="checkbox"><span>4要素（目的・レイアウト・内容・対象）入りのプロンプトを送った</span></li>
+          <li><input type="checkbox"><span>キャンバスに最初のデザインが出た</span></li>
+          <li><input type="checkbox"><span>チャットで全体を1回直した</span></li>
+          <li><input type="checkbox"><span>要素を1つクリックしてコメントで微調整した</span></li>
+          <li><input type="checkbox"><span>「2案見せて」で別案を比べた</span></li>
+          <li><input type="checkbox"><span>Export から PDF か HTML で書き出した</span></li>
+          <li><input type="checkbox"><span>Share でリンクを作って共有した</span></li>
+        </ul>
+      </div>
+      <div class="callout tip"><span class="t">🎉 ここまでできたら</span>あなたはもう Claude Design の基本をマスターしています。次は<b>デザインシステムの連携</b>（8章）や<b>Claude Code への引き継ぎ</b>（11章）に挑戦してみましょう。</div>
+
+      <footer>
+        <p><b>出典・参考（公式・解説記事）：</b></p>
+        <p>
+          <a href="https://support.claude.com/en/articles/14604416-get-started-with-claude-design" target="_blank" rel="noopener">Get started with Claude Design — Claude Help Center（公式）</a><br>
+          <a href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">Introducing Claude Design by Anthropic Labs — Anthropic（公式発表）</a><br>
+          <a href="https://claude.ai/design" target="_blank" rel="noopener">Claude Design 本体 — claude.ai/design</a>
+        </p>
+        <p style="margin-top:14px;color:#9a938a;">※ Claude Design はベータ版のため、仕様や対応サービスは今後変わる可能性があります（情報は2026年6月時点）。</p>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<script>
+  // progress bar
+  const prog = document.getElementById('progress');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+    prog.style.width = Math.min(100, Math.max(0, scrolled*100)) + '%';
+  };
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // scroll-spy
+  const links = [...document.querySelectorAll('nav.toc a')];
+  const map = {};
+  links.forEach(a => { const id = a.getAttribute('href').slice(1); map[id] = a; });
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        const a = map[e.target.id];
+        if(a){ a.classList.add('active');
+          a.scrollIntoView({block:'nearest'}); }
+      }
+    });
+  }, {rootMargin:'-20% 0px -70% 0px', threshold:0});
+  document.querySelectorAll('section').forEach(s=>obs.observe(s));
+
+  // copy buttons
+  document.querySelectorAll('.copy').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const txt = btn.parentElement.querySelector('p').innerText.trim();
+      navigator.clipboard.writeText(txt).then(()=>{
+        const old = btn.textContent; btn.textContent='コピーしました'; btn.classList.add('done');
+        setTimeout(()=>{ btn.textContent=old; btn.classList.remove('done'); }, 1400);
+      }).catch(()=>{ btn.textContent='失敗'; setTimeout(()=>btn.textContent='コピー',1400); });
+    });
+  });
+
+  // mobile menu
+  const toc = document.getElementById('toc');
+  const mb = document.getElementById('menuBtn');
+  mb.addEventListener('click', ()=> toc.classList.toggle('open'));
+  toc.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> toc.classList.remove('open')));
+</script>
+</body>
+</html>
