@@ -170,6 +170,7 @@
       <li><a href="#s13">良いプロンプトのコツ</a></li>
       <li><a href="#s14">困ったとき / 制限事項</a></li>
       <li><a href="#s15">練習：チェックリスト</a></li>
+      <li><a href="#s16">応用：Instagram投稿</a></li>
       <li><a href="#support">☕ サポート</a></li>
     </ol>
   </nav>
@@ -434,7 +435,51 @@
           <li><input type="checkbox"><span>Share でリンクを作って共有した</span></li>
         </ul>
       </div>
-      <div class="callout tip"><span class="t">🎉 ここまでできたら</span>あなたはもう Claude Design の基本をマスターしています。次は<b>デザインシステムの連携</b>（8章）や<b>Claude Code への引き継ぎ</b>（11章）に挑戦してみましょう。</div>
+      <div class="callout tip"><span class="t">🎉 ここまでできたら</span>あなたはもう Claude Design の基本をマスターしています。次は<b>デザインシステムの連携</b>（8章）や<b>Claude Code への引き継ぎ</b>（11章）、次の<b>Instagram投稿づくり</b>（16章）に挑戦してみましょう。</div>
+    </section>
+
+    <!-- 16 -->
+    <section id="s16">
+      <h2><span class="num">16</span>応用：Instagram投稿を作る</h2>
+      <p class="sub">Claude Design はSNS素材も得意。サイズを指定するだけで3種類とも作れます。</p>
+      <p>コツはたった1つ。プロンプトの最初に<b>「用途」と「正確なピクセルサイズ」</b>を書くこと。これだけで縦横比がピタッと合います。下の例は「コピー」してそのまま使えます。</p>
+
+      <h3>① 正方形〜縦長フィード投稿（4:5 / 1080×1350）</h3>
+      <p>Instagramのフィードで<b>一番大きく表示される</b>のが縦4:5（1080×1350px）。情報量が多い告知やTips投稿におすすめです（正方形なら1080×1080）。</p>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">例：4:5 フィード投稿</span>
+        <p>Instagramのフィード投稿を1080×1350px（縦4:5）で作って。テーマは「Claude Designの使い方を無料で学べるサイトを公開しました」。上に大きめのキャッチコピー、中央にサイト名、下に「プロフィールのリンクから」の一言。明るく信頼感のある配色で、文字は離れて見ても読める大きさに。</p></div>
+
+      <h3>② カルーセル（複数枚のスワイプ投稿）</h3>
+      <p>複数枚を横スワイプで見せる形式。<b>「1枚目で惹きつけ→2枚目以降で中身→最後にCTA（行動喚起）」</b>の構成が鉄板です。保存・シェアされやすく、伸びやすい形式。</p>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">例：5枚カルーセル</span>
+        <p>Instagram用のカルーセル投稿を5枚、各1080×1350px（縦4:5）で作って。テーマは「Claude Designの始め方5ステップ」。1枚目＝表紙（タイトルと「保存推奨」バッジ）、2〜4枚目＝ステップ解説（各1ステップ＋アイコン）、5枚目＝まとめとサイトへの誘導。全枚数で色・フォント・余白を統一して、左下に小さくページ番号を入れて。</p></div>
+      <div class="callout tip"><span class="t">💡 カルーセルのコツ</span>「全枚数でデザインを統一して」と必ず添えると、バラつかず<b>シリーズ感</b>が出ます。枚数は最大10枚まで。1枚目は文字大きめ＆余白多めが正解。</div>
+
+      <h3>③ ストーリーズ／リール表紙（縦長 1080×1920）</h3>
+      <p>画面いっぱいに出る縦長（9:16）。タップで流れていくので<b>1画面1メッセージ</b>が基本。上下は通知やボタンで隠れやすいので、<b>大事な要素は中央</b >に置きます。</p>
+      <div class="prompt"><button class="copy">コピー</button><span class="lbl">例：ストーリーズ</span>
+        <p>Instagramストーリーズ用の縦長画像を1080×1920px（9:16）で作って。テーマは「Claude Design解説サイト公開」。画面中央に大きなタイトルと一言、下部に「上にスワイプ／リンクはこちら」の誘導。重要な文字は上下150pxを避けて中央寄せに。インパクトのある大きな文字で。</p></div>
+
+      <h3>サイズ早見表</h3>
+      <table>
+        <tr><th>用途</th><th>ピクセルサイズ</th><th>縦横比</th><th>ひとこと</th></tr>
+        <tr><td>正方形フィード</td><td>1080 × 1080</td><td>1:1</td><td>無難・万能</td></tr>
+        <tr><td>縦長フィード</td><td>1080 × 1350</td><td>4:5</td><td>一番大きく表示・おすすめ</td></tr>
+        <tr><td>カルーセル各枚</td><td>1080 × 1350</td><td>4:5</td><td>最大10枚・統一感が命</td></tr>
+        <tr><td>ストーリーズ／リール表紙</td><td>1080 × 1920</td><td>9:16</td><td>中央に主役を配置</td></tr>
+      </table>
+
+      <h3>作ったあとの書き出し</h3>
+      <ul class="check">
+        <li><input type="checkbox"><span>右上の <b>Export</b> → <b>画像</b>で書き出してスマホに送る → そのまま投稿</span></li>
+        <li><input type="checkbox"><span>仕上げを微調整したいときは <b>Canva / Adobe へ送る</b>連携が便利</span></li>
+        <li><input type="checkbox"><span>カルーセルは<b>1枚ずつ画像で書き出し</b>、投稿時に順番に並べる</span></li>
+      </ul>
+      <div class="callout warn"><span class="t">⚠ 得意・不得意</span>文字とレイアウト中心の投稿は<b>とても得意</b>。一方で「写真そのもの」を作るのは本職ではないので、写真メインの“映え”投稿は<b>素材を別途用意</b>するか画像生成AIと併用しましょう。</div>
+    </section>
+
+    <!-- support -->
+    <section id="s-end">
 
       <div class="support" id="support" style="scroll-margin-top:24px;">
         <h3>☕ このサイトが役に立ったら</h3>
