@@ -117,6 +117,19 @@
   .faq .a{padding:0 0 16px 22px;color:var(--ink-soft);font-size:14.5px;}
   footer{border-top:1px solid var(--line);padding-top:24px;margin-top:40px;color:var(--ink-soft);font-size:13px;}
   footer a{color:var(--coral-dark);}
+  /* support / monetization */
+  .support{margin-top:48px;background:linear-gradient(135deg,#fff,var(--coral-soft));
+    border:1px solid var(--line);border-radius:16px;padding:28px 26px;text-align:center;}
+  .support h3{margin:0 0 6px;font-size:20px;}
+  .support p.s-lead{margin:0 0 18px;color:var(--ink-soft);font-size:14.5px;}
+  .support .btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+  .s-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;font-size:14.5px;
+    padding:12px 20px;border-radius:11px;transition:.18s;border:1px solid transparent;}
+  .s-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12);}
+  .s-btn.coffee{background:#ffdd00;color:#2b2620;}
+  .s-btn.claude{background:var(--coral);color:#fff;}
+  .support .note{margin:16px 0 0;font-size:11.5px;color:var(--ink-soft);}
+  .support .note a{color:var(--coral-dark);}
   /* responsive */
   .menu-btn{display:none;}
   @media(max-width:860px){
@@ -157,6 +170,7 @@
       <li><a href="#s13">良いプロンプトのコツ</a></li>
       <li><a href="#s14">困ったとき / 制限事項</a></li>
       <li><a href="#s15">練習：チェックリスト</a></li>
+      <li><a href="#support">☕ サポート</a></li>
     </ol>
   </nav>
 
@@ -421,6 +435,16 @@
         </ul>
       </div>
       <div class="callout tip"><span class="t">🎉 ここまでできたら</span>あなたはもう Claude Design の基本をマスターしています。次は<b>デザインシステムの連携</b>（8章）や<b>Claude Code への引き継ぎ</b>（11章）に挑戦してみましょう。</div>
+
+      <div class="support" id="support" style="scroll-margin-top:24px;">
+        <h3>☕ このサイトが役に立ったら</h3>
+        <p class="s-lead">無料で公開しています。応援いただけると、解説の追加・更新の励みになります🙌</p>
+        <div class="btns">
+          <a class="s-btn coffee" href="https://buymeacoffee.com/yayutom" target="_blank" rel="noopener">☕ コーヒーを1杯おごる</a>
+          <a class="s-btn claude" href="https://claude.ai/design" target="_blank" rel="noopener">✨ Claude Design を試す</a>
+        </div>
+        <p class="note">※「Claude Design を試す」は <a href="https://claude.ai/design" target="_blank" rel="noopener">claude.ai/design</a> へのリンクです。利用には Pro/Max/Team などの有料プランが必要です。</p>
+      </div>
 
       <footer>
         <p><b>出典・参考（公式・解説記事）：</b></p>
